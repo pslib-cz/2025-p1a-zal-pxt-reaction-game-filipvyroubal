@@ -66,18 +66,18 @@ function StartedToRunning(): number{
     control.inBackground(() => music.playTone(Note.FSharp5,200));
     return stavy.Running;
 }
-
-input.onButtonPressed(Button.A, function() {
-    switch(AktualniStav){
+input.onLogoEvent(TouchButtonEvent.Pressed, function() {
+    switch (AktualniStav) {
         case stavy.Passive:
             basic.clearScreen();
-            AktualniStav = PassiveToStarted(3,6);
+            AktualniStav = PassiveToStarted(3, 6);
             basic.clearScreen();
-            if(AktualniStav == stavy.Started){
+            if (AktualniStav == stavy.Started) {
                 AktualniStav = StartedToRunning();
             }
     }
 })
+
 basic.forever(function() {
     switch(AktualniStav){
         case stavy.Running:
