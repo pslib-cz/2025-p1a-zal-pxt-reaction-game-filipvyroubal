@@ -51,9 +51,15 @@ function WasPressedBefore(): boolean {
 function PassiveToStarted(min:number,max:number):number{
     NakresliVzor(hodiny);
     control.inBackground(() => music.play(music.tonePlayable(Note.C, music.beat(BeatFraction.Whole)), music.PlaybackMode.UntilDone))
-    basic.pause(randint(min,max)*1000);
-    AktualniStav = stavy.Started;
-    return WasPressedBefore() ? stavy.Passive : stavy.Started;
+    let wait:number = randint(min, max) * 1000
+    let start :number = control.millis()
+    while (control.millis() - start < wait) {
+        if (WasPressedBefore()) {
+            return stavy.Passive; // someone pressed early → exit immediately
+        }
+        basic.pause(20);
+    }
+    return stavy.Started;
 }
 function StartedToRunning(): number{
     basic.showIcon(IconNames.Pitchfork);
@@ -67,7 +73,9 @@ input.onButtonPressed(Button.A, function() {
             basic.clearScreen();
             AktualniStav = PassiveToStarted(3,6);
             basic.clearScreen();
-            AktualniStav = StartedToRunning();  
+            if(AktualniStav == stavy.Started){
+                AktualniStav = StartedToRunning();
+            }
     }
 })
 basic.forever(function() {
